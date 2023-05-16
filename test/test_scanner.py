@@ -1,5 +1,5 @@
 import unittest
-from pylox.scanner import Scanner, ONE_CHAR_TOKENS, TWO_CHAR_TOKENS
+from pylox.lexer.scanner import Scanner, ONE_CHAR_TOKENS, CONDITIONAL_TOKENS
 from pylox.error_reporter import ErrorReporter
 from pylox.token import TokenType
 
@@ -13,13 +13,13 @@ class TestLexOperators(unittest.TestCase):
             self.assertEqual(tokens[0].token_type, expected_type)
 
     def test_two_char_single(self):
-        for char, char_entry in TWO_CHAR_TOKENS.items():
+        for char, char_entry in CONDITIONAL_TOKENS.items():
             scanner = Scanner(char, ErrorReporter())
             tokens = scanner.scan_tokens()
             self.assertEqual(tokens[0].token_type, char_entry[0])
 
     def test_two_char_composite(self):
-        for char, char_entry in TWO_CHAR_TOKENS.items():
+        for char, char_entry in CONDITIONAL_TOKENS.items():
             composite_char = char + char_entry[1][0]
             scanner = Scanner(composite_char, ErrorReporter())
             tokens = scanner.scan_tokens()

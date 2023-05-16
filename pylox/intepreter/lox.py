@@ -1,5 +1,5 @@
 from typing import List
-from pylox.scanner import Scanner
+from pylox.lexer.scanner import Scanner
 from pylox.token import Token
 from pylox.error_reporter import ErrorReporter
 

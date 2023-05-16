@@ -1,6 +1,6 @@
 from typing import List
-from .token import Token, TokenType
-from .error_reporter import ErrorReporter
+from pylox.token import Token, TokenType
+from pylox.error_reporter import ErrorReporter
 
 ONE_CHAR_TOKENS = {
     "(": TokenType.LEFT_PAREN,
@@ -15,7 +15,7 @@ ONE_CHAR_TOKENS = {
     "*": TokenType.STAR,
 }
 
-TWO_CHAR_TOKENS = {
+CONDITIONAL_TOKENS = {
     "!": (TokenType.BANG, ("=", TokenType.BANG_EQ)),
     "=": (
         TokenType.EQ,
@@ -72,26 +72,19 @@ class Scanner:
     def _scan_token(self):
         c = self.state.advance()
 
-        # Process the one-character tokens
-        if c in ONE_CHAR_TOKENS:
-            self._add_token(ONE_CHAR_TOKENS[c], None)
-            return
-
-        # Process two-character tokens
-        if c in TWO_CHAR_TOKENS:
-            token_entry = TWO_CHAR_TOKENS[c]
-            if self.state.advance_cond("="):
-                token_type: TokenType = token_entry[1][1]
-            else:
-                token_type: TokenType = token_entry[0]
-
-            self._add_token(token_type, None)
-            return
-
-        # Handle the rest of the cases
         match c:
+            case c if c in ONE_CHAR_TOKENS:
+                self._add_token(ONE_CHAR_TOKENS[c], None)
+            case c if c in CONDITIONAL_TOKENS:
+                token_entry = CONDITIONAL_TOKENS[c]
+                if self.state.advance_match("="):
+                    token_type: TokenType = token_entry[1][1]
+                else:
+                    token_type: TokenType = token_entry[0]
+
+                self._add_token(token_type, None)
             case "/":
-                if self.state.advance_cond("/"):
+                if self.state.advance_match("/"):
                     while self.state.peek() != "\n" and not self.state.eof():
                         self.state.advance()
                 else:
@@ -182,7 +175,7 @@ class Scanner:
             self.current += 1
             return current_char
 
-        def advance_cond(self, expected: str) -> bool:
+        def advance_match(self, expected: str) -> bool:
             """Advance only if the next character matches"""
             if self.eof():
                 return False
