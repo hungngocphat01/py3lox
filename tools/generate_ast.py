@@ -30,7 +30,7 @@ def generate_ast():
         visit_func = "\n".join((
             "\n",
             "    def accept(self, visitor: Visitor):",
-            f"        return visitor.visit{class_name}Expr(self)"
+            f"        return visitor.visit_{class_name.lower()}_expr(self)"
         ))
         class_def += visit_func
 
@@ -47,7 +47,7 @@ def generate_visitors():
     for class_name in expr:
         visitor_method = "\n".join((
             "    @abstractmethod",
-            f"    def visit{class_name}Expr(self, expr: {class_name}): ...",
+            f"    def visit_{class_name.lower()}_expr(self, expr: {class_name}): ...",
             "\n"
         ))
 

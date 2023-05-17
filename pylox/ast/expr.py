@@ -16,21 +16,21 @@ class Binary(Expr):
     right: Expr
 
     def accept(self, visitor: Visitor):
-        return visitor.visitBinaryExpr(self)
+        return visitor.visit_binary_expr(self)
 
 @dataclass
 class Grouping(Expr):
     expr: Expr
 
     def accept(self, visitor: Visitor):
-        return visitor.visitGroupingExpr(self)
+        return visitor.visit_grouping_expr(self)
 
 @dataclass
 class Literal(Expr):
     value: object
 
     def accept(self, visitor: Visitor):
-        return visitor.visitLiteralExpr(self)
+        return visitor.visit_literal_expr(self)
 
 @dataclass
 class Unary(Expr):
@@ -38,21 +38,21 @@ class Unary(Expr):
     right: Expr
 
     def accept(self, visitor: Visitor):
-        return visitor.visitUnaryExpr(self)
+        return visitor.visit_unary_expr(self)
 
 
 
 class Visitor(ABC):
     @abstractmethod
-    def visitBinaryExpr(self, expr: Binary): ...
+    def visit_binary_expr(self, expr: Binary): ...
 
     @abstractmethod
-    def visitGroupingExpr(self, expr: Grouping): ...
+    def visit_grouping_expr(self, expr: Grouping): ...
 
     @abstractmethod
-    def visitLiteralExpr(self, expr: Literal): ...
+    def visit_literal_expr(self, expr: Literal): ...
 
     @abstractmethod
-    def visitUnaryExpr(self, expr: Unary): ...
+    def visit_unary_expr(self, expr: Unary): ...
 
 
