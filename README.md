@@ -5,7 +5,7 @@
 
 ## What's this 
 
-This is the Python implementation of the [Lox programming language](https://craftinginterpreters.com/the-lox-language.html). It is a high level language with dynamic typing and automatic memory management. Lox is also an object-oriented language, though I might stop at implementing a struct-like data type without inheritance support. Lox's syntax resembles C.
+This is the Python implementation of an intepreter for [Lox](https://craftinginterpreters.com/the-lox-language.html), a JavaScript-inspired high level language with dynamic typing and automatic memory management. Lox is also an object-oriented language, though I might stop at implementing a struct-like data type without inheritance support.
 
 ```kotlin
 fun fibonacci(x) {
@@ -28,6 +28,8 @@ while (a > 5) {
 ```
 
 ## Implementation status:
+
+![Pipeline](images/pipeline.jpg)
 
 - [x] Lexer 
 - [ ] Expression 
