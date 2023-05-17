@@ -34,7 +34,7 @@ while (a > 5) {
 - [x] Lexer 
 - [ ] Expression 
   - [x] Parser 
-  - [ ] Evaluator
+  - [x] Evaluator
 - [ ] Statements 
   - [ ] Parser
   - [ ] Evaluator 
