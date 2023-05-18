@@ -1,6 +1,7 @@
 stmt = {
     "Print": ("expr: Expr",),
     "Expression": ("expr: Expr",),
+    "Var": ("name: Token", "initializer: Expr")
 }
 
 

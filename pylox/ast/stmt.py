@@ -1,6 +1,7 @@
 from __future__ import annotations
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
+from pylox.token import Token
 from pylox.ast.expr import Expr
 
 
@@ -23,6 +24,14 @@ class ExpressionStmt(Stmt):
     def accept(self, visitor: Visitor):
         return visitor.visit_expression_stmt(self)
 
+@dataclass
+class VarStmt(Stmt):
+    name: Token
+    initializer: Expr
+
+    def accept(self, visitor: Visitor):
+        return visitor.visit_var_stmt(self)
+
 
 
 class Visitor(ABC):
@@ -31,5 +40,8 @@ class Visitor(ABC):
 
     @abstractmethod
     def visit_expression_stmt(self, stmt: ExpressionStmt): ...
+
+    @abstractmethod
+    def visit_var_stmt(self, stmt: VarStmt): ...
 
 

@@ -1,9 +1,14 @@
 from typing import Type
+from dataclasses import dataclass
 from pylox.token import TokenType, Token
-from pylox.ast.expr import BinaryExpr, GroupingExpr, LiteralExpr, UnaryExpr, Visitor, Expr
+from pylox.ast.expr import BinaryExpr, GroupingExpr, LiteralExpr, UnaryExpr, VariableExpr, Visitor, Expr
 from pylox.intepreter.exc import IntepreterRuntimeError
+from pylox.intepreter.environment import Environment
 
+@dataclass
 class ExprEvaluator(Visitor):
+    env: Environment
+
     def visit_literal_expr(self, expr: LiteralExpr) -> object:
         return expr.value
 
@@ -63,6 +68,9 @@ class ExprEvaluator(Visitor):
                 result = left == right
 
         return result
+    
+    def visit_variable_expr(self, expr: VariableExpr):
+        return self.env.get(expr.name)
     
     def ensure_numbers(self, operator: Token, *args: object):
         if not self.are_same_type(float, *args):

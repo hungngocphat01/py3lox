@@ -1,6 +1,21 @@
 from pylox.token import TokenType
-from pylox.ast.expr import BinaryExpr, UnaryExpr, LiteralExpr, GroupingExpr, Expr
+from pylox.ast.expr import BinaryExpr, UnaryExpr, LiteralExpr, GroupingExpr, VariableExpr, Expr
 from pylox.parser.state import ParserState
+
+"""
+Expression grammar
+-------------------------
+expression     → equality ;
+equality       → comparison ( ( "!=" | "==" ) comparison )* ;
+comparison     → term ( ( ">" | ">=" | "<" | "<=" ) term )* ;
+term           → factor ( ( "-" | "+" ) factor )* ;
+factor         → unary ( ( "/" | "*" ) unary )* ;
+unary          → ( "!" | "-" ) unary
+               | primary ;
+primary        → NUMBER | STRING | "true" | "false" | "nil"
+               | "(" expression ")"
+               | IDENT ;
+"""
 
 class ExpressionParser:
     def __init__(self, state: ParserState):
@@ -81,6 +96,9 @@ class ExpressionParser:
                 TokenType.RIGHT_PAREN, "Missing closing parenthesis"
             )
             return GroupingExpr(expr)
+        
+        if self.state.match_type(TokenType.IDENT):
+            return VariableExpr(self.state.previous())
 
         raise self.state.error(self.state.peek(), "Expected expression")
 

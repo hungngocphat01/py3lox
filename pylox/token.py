@@ -57,6 +57,12 @@ class Token:
     literal: object
     line: int
 
+    def __hash__(self) -> int:
+        return (self.token_type.name, self.lexeme).__hash__()
+    
+    def __eq__(self, __value: object) -> bool:
+        return isinstance(__value, Token) and (self.token_type == __value.token_type) and (self.lexeme == __value.lexeme)
+
     def to_string(self) -> str:
         return "{} {} {}".format(self.token_type, self.lexeme, self.literal)
     

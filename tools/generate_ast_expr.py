@@ -2,7 +2,8 @@ expr = {
     "Binary": ("left: Expr", "operator: Token", "right: Expr"),
     "Grouping": ("expr: Expr",),
     "Literal": ("value: object",),
-    "Unary": ("operator: Token", "right: Expr")
+    "Unary": ("operator: Token", "right: Expr"),
+    "Variable": ("name: Token",)
 }
 
 
@@ -22,7 +23,7 @@ def generate_ast():
 
     for class_name, fields in expr.items():
         class_def = ("\n\n@dataclass\n"
-                    f"class {class_name}(Expr):")
+                    f"class {class_name}Expr(Expr):")
         for field in fields:
             class_def += "\n    " + field
 
@@ -47,7 +48,7 @@ def generate_visitors():
     for class_name in expr:
         visitor_method = "\n".join((
             "    @abstractmethod",
-            f"    def visit_{class_name.lower()}_expr(self, expr: {class_name}): ...",
+            f"    def visit_{class_name.lower()}_expr(self, expr: {class_name}Expr): ...",
             "\n"
         ))
 
