@@ -12,6 +12,7 @@ class ErrorReporter:
             self.report(token.line, " at end", message)
         else:
             self.report(token.line, " at '{}'".format(token.lexeme), message)
+        
     
     def report(self, line: int, where: str, message: str):
         print("[Line {}] Error {}: {}".format(line, where, message))

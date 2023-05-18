@@ -1,5 +1,5 @@
 import pylox.ast.expr as Expr
-from pylox.ast.expr import Visitor, BinaryExpr, GroupingExpr, LiteralExpr, VariableExpr, UnaryExpr
+from pylox.ast.expr import AssignmentExpr, Visitor, BinaryExpr, GroupingExpr, LiteralExpr, VariableExpr, UnaryExpr
 
 class AstPrinter(Visitor):
     def print(self, expr: Expr):
@@ -21,6 +21,9 @@ class AstPrinter(Visitor):
     
     def visit_variable_expr(self, expr: VariableExpr):
         return self.parenthesize("var_ref", expr.name)
+
+    def visit_assignment_expr(self, expr: AssignmentExpr):
+        return self.parenthesize("var_asgn", expr.name, self.parenthesize(expr.value))
 
     def parenthesize(self, name: str, *args: Expr) -> str:
         s = "(" + name 

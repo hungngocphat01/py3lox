@@ -6,6 +6,7 @@ from pylox.parser import Parser
 from pylox.intepreter.expression import ExprEvaluator
 from pylox.intepreter.statement import StmtEvaluator
 from pylox.intepreter.environment import Environment
+from pylox.intepreter.exc import IntepreterRuntimeError
 
 class Intepreter:
     def __init__(self):
@@ -62,5 +63,8 @@ class Intepreter:
         return self.expr_evaluator.evaluate(ast)
 
     def evaluate(self, statements: List[Stmt]):
-        for stmt in statements:
-            self.stmt_evaluator.evaluate(stmt)
+        try:
+            for stmt in statements:
+                self.stmt_evaluator.evaluate(stmt)
+        except IntepreterRuntimeError as e:
+            self.error_reporter.error_token(e.token, f"Runtime error: {str(e)}")

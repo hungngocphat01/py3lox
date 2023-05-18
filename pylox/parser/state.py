@@ -45,3 +45,4 @@ class ParserState:
 
     def eof(self):
         return self.peek().token_type == TokenType.EOF
+    

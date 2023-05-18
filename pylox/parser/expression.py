@@ -1,11 +1,21 @@
 from pylox.token import TokenType
-from pylox.ast.expr import BinaryExpr, UnaryExpr, LiteralExpr, GroupingExpr, VariableExpr, Expr
+from pylox.ast.expr import (
+    BinaryExpr,
+    UnaryExpr,
+    LiteralExpr,
+    GroupingExpr,
+    VariableExpr,
+    AssignmentExpr,
+    Expr,
+)
 from pylox.parser.state import ParserState
 
 """
 Expression grammar
 -------------------------
-expression     → equality ;
+expression     → assignment ;
+assignment     → IDENT "=" expression 
+               | equality ;
 equality       → comparison ( ( "!=" | "==" ) comparison )* ;
 comparison     → term ( ( ">" | ">=" | "<" | "<=" ) term )* ;
 term           → factor ( ( "-" | "+" ) factor )* ;
@@ -17,14 +27,26 @@ primary        → NUMBER | STRING | "true" | "false" | "nil"
                | IDENT ;
 """
 
+
 class ExpressionParser:
     def __init__(self, state: ParserState):
         self.state = state
 
     def parse_expr(self) -> Expr:
-        return self.parse_equality()
+        return self.parse_assignment()
 
-    def parse_equality(self) -> BinaryExpr:
+    def parse_assignment(self):
+        expr = self.parse_equality()
+
+        if self.state.match_type(TokenType.EQ):
+            if not isinstance(expr, VariableExpr):
+                self.state.error(self.state.previous(), "Not an assignment target")
+            right = self.parse_equality()
+            return AssignmentExpr(getattr(expr, "name"), right)
+
+        return expr
+
+    def parse_equality(self) -> Expr:
         expr = self.parse_comparison()
 
         while self.state.match_type(TokenType.EQ_EQ, TokenType.BANG_EQ):
@@ -34,7 +56,7 @@ class ExpressionParser:
 
         return expr
 
-    def parse_comparison(self) -> BinaryExpr:
+    def parse_comparison(self) -> Expr:
         expr = self.parse_term()
 
         while self.state.match_type(
@@ -49,7 +71,7 @@ class ExpressionParser:
 
         return expr
 
-    def parse_term(self) -> BinaryExpr:
+    def parse_term(self) -> Expr:
         expr = self.parse_factor()
 
         while self.state.match_type(TokenType.PLUS, TokenType.MINUS):
@@ -59,7 +81,7 @@ class ExpressionParser:
 
         return expr
 
-    def parse_factor(self) -> BinaryExpr:
+    def parse_factor(self) -> Expr:
         expr = self.parse_unary()
 
         while self.state.match_type(TokenType.STAR, TokenType.SLASH):
@@ -69,7 +91,7 @@ class ExpressionParser:
 
         return expr
 
-    def parse_unary(self) -> UnaryExpr:
+    def parse_unary(self) -> Expr:
         while self.state.match_type(TokenType.BANG, TokenType.MINUS):
             op = self.state.previous()
             right = self.parse_primary()
@@ -96,10 +118,8 @@ class ExpressionParser:
                 TokenType.RIGHT_PAREN, "Missing closing parenthesis"
             )
             return GroupingExpr(expr)
-        
+
         if self.state.match_type(TokenType.IDENT):
             return VariableExpr(self.state.previous())
 
         raise self.state.error(self.state.peek(), "Expected expression")
-
-    

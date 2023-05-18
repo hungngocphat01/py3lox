@@ -3,7 +3,8 @@ expr = {
     "Grouping": ("expr: Expr",),
     "Literal": ("value: object",),
     "Unary": ("operator: Token", "right: Expr"),
-    "Variable": ("name: Token",)
+    "Variable": ("name: Token",),
+    "Assignment": ("name: Token", "value: Expr")
 }
 
 

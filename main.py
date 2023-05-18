@@ -1,10 +1,13 @@
 from pylox import Intepreter
+from pylox.ast.ast_printer import AstPrinter
 
-source = "print (1/2)*3+4;"
-
-intepreter = Intepreter()
-result = intepreter.intepret("""
+source = """
 var a = 1;
-var b = 2;
-print a+b;
-""")
+var b = 9.15;
+
+a = 5*b/(1/8.23+2-(8/7*(2/3)));
+print a;
+print a > "n";
+"""
+
+Intepreter().intepret(source)
