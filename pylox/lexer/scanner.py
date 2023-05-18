@@ -160,7 +160,7 @@ class Scanner:
         def __init__(self, source: str):
             self.start: int = 0
             self.current: int = 0
-            self.line: int = 0
+            self.line: int = 1
 
             self.source = source
 

@@ -10,7 +10,7 @@ class Expr(ABC):
         pass
 
 @dataclass
-class Binary(Expr):
+class BinaryExpr(Expr):
     left: Expr
     operator: Token
     right: Expr
@@ -19,21 +19,21 @@ class Binary(Expr):
         return visitor.visit_binary_expr(self)
 
 @dataclass
-class Grouping(Expr):
+class GroupingExpr(Expr):
     expr: Expr
 
     def accept(self, visitor: Visitor):
         return visitor.visit_grouping_expr(self)
 
 @dataclass
-class Literal(Expr):
+class LiteralExpr(Expr):
     value: object
 
     def accept(self, visitor: Visitor):
         return visitor.visit_literal_expr(self)
 
 @dataclass
-class Unary(Expr):
+class UnaryExpr(Expr):
     operator: Token
     right: Expr
 
@@ -44,15 +44,15 @@ class Unary(Expr):
 
 class Visitor(ABC):
     @abstractmethod
-    def visit_binary_expr(self, expr: Binary): ...
+    def visit_binary_expr(self, expr: BinaryExpr): ...
 
     @abstractmethod
-    def visit_grouping_expr(self, expr: Grouping): ...
+    def visit_grouping_expr(self, expr: GroupingExpr): ...
 
     @abstractmethod
-    def visit_literal_expr(self, expr: Literal): ...
+    def visit_literal_expr(self, expr: LiteralExpr): ...
 
     @abstractmethod
-    def visit_unary_expr(self, expr: Unary): ...
+    def visit_unary_expr(self, expr: UnaryExpr): ...
 
 

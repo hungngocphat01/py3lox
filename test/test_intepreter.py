@@ -9,13 +9,14 @@ class TestIntepreterExpr(unittest.TestCase):
     def setUp(self) -> None:
         self.intepreter = Intepreter()
     
+    def intepret(self, s: str):
+        # pylint: disable=W0212
+        return self.intepreter._intepret_expr(s)
+    
     def test_eq(self):
         for lit in [1, 12.23, "true", "false", "nil", '"abcdef"']:
-            result = self.intepreter.intepret("{0} == {0}".format(lit))
+            result = self.intepret("{0} == {0}".format(lit))
             self.assertTrue(result)
-
-    def intepret(self, s: str):
-        return self.intepreter.intepret(s)
 
     def test_neq(self):
         self.assertFalse(self.intepret("1 != 1"))

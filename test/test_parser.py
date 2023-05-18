@@ -20,7 +20,8 @@ def parse(tokens: List[Token]):
     e = ErrorReporter()
     parser = Parser(tokens, e)
 
-    return parser.parse(), e
+    # pylint: disable=W0212
+    return parser._parse_expr(), e
 
 def stringify(ast: expr.Expr):
     printer = AstPrinter()
@@ -54,7 +55,7 @@ class TestSingleParser(unittest.TestCase):
             ast, e = parse(tokens)
 
             self.assertFalse(e.had_error)
-            self.assertIsInstance(ast, expr.Binary)
+            self.assertIsInstance(ast, expr.BinaryExpr)
             self.assertEqual(ast.operator.lexeme, operator.lexeme)
             self.assertEqual(getattr(ast.left, "value"), 12.34)
             self.assertEqual(getattr(ast.right, "value"), "abcdef")
@@ -78,7 +79,7 @@ class TestSingleParser(unittest.TestCase):
             ast, e = parse(tokens)
 
             self.assertFalse(e.had_error)
-            self.assertIsInstance(ast, expr.Unary)
+            self.assertIsInstance(ast, expr.UnaryExpr)
             self.assertEqual(ast.operator.lexeme, operator.lexeme)
             self.assertEqual(getattr(ast.right, "value"), "abcdef")
 
@@ -93,8 +94,8 @@ class TestSingleParser(unittest.TestCase):
         ast, e = parse(tokens)
 
         self.assertFalse(e.had_error)
-        self.assertIsInstance(ast, expr.Grouping)
-        self.assertEqual(ast.expr, expr.Literal(12))
+        self.assertIsInstance(ast, expr.GroupingExpr)
+        self.assertEqual(ast.expr, expr.LiteralExpr(12))
 
     def test_grouping_throw(self):
         tokens = [

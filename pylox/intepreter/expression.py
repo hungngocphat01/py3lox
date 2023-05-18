@@ -1,16 +1,16 @@
 from typing import Type
 from pylox.token import TokenType, Token
-from pylox.ast.expr import Binary, Grouping, Literal, Unary, Visitor, Expr
+from pylox.ast.expr import BinaryExpr, GroupingExpr, LiteralExpr, UnaryExpr, Visitor, Expr
 from pylox.intepreter.exc import IntepreterRuntimeError
 
-class Evaluator(Visitor):
-    def visit_literal_expr(self, expr: Literal) -> object:
+class ExprEvaluator(Visitor):
+    def visit_literal_expr(self, expr: LiteralExpr) -> object:
         return expr.value
 
-    def visit_grouping_expr(self, expr: Grouping) -> object:
+    def visit_grouping_expr(self, expr: GroupingExpr) -> object:
         return self.evaluate(expr.expr)
     
-    def visit_unary_expr(self, expr: Unary):
+    def visit_unary_expr(self, expr: UnaryExpr):
         right = self.evaluate(expr.right)
 
         match (expr.operator.token_type):
@@ -19,7 +19,7 @@ class Evaluator(Visitor):
             case TokenType.BANG:
                 return not self.is_truthy(right)
             
-    def visit_binary_expr(self, expr: Binary):
+    def visit_binary_expr(self, expr: BinaryExpr):
         left = self.evaluate(expr.left)
         right = self.evaluate(expr.right)
 

@@ -1,22 +1,38 @@
 from typing import List
-from pylox.token import Token
-from pylox.ast.expr import Expr
-from pylox.error_reporter import ErrorReporter
+
+from pylox import Token, Expr, Stmt, ErrorReporter
 from pylox.lexer import Scanner
 from pylox.parser import Parser
-from pylox.intepreter.evaluate import Evaluator
+from pylox.intepreter.expression import ExprEvaluator
+from pylox.intepreter.statement import StmtEvaluator
 
 class Intepreter:
+    def __init__(self):
+        self.error_reporter = ErrorReporter()
+        self.expr_evaluator = ExprEvaluator()
+        self.stmt_evaluator = StmtEvaluator(self.expr_evaluator)
+
     def intepret(self, source: str) -> object:
         tokens, e = self.lex(source)
         if e.had_error:
-            return
+            return None
         
-        ast, e = self.parse(tokens)
+        statements, e = self.parse(tokens)
         if e.had_error:
-            return 
+            return None
         
-        return self.evaluate(ast)
+        return self.evaluate(statements)
+    
+    def _intepret_expr(self, source: str) -> object:
+        tokens, e = self.lex(source)
+        if e.had_error:
+            return None
+        
+        ast, e = self._parse_expr(tokens)
+        if e.had_error:
+            return None
+        
+        return self.evaluate_expr(ast)
     
     def lex(self, source: str):
         error_reporter = ErrorReporter()
@@ -28,17 +44,22 @@ class Intepreter:
     def parse(self, tokens: List[Token]):
         error_reporter = ErrorReporter()
         parser = Parser(tokens, error_reporter)
-        ast = parser.parse()
+        statements = parser.parse()
 
-        return ast, error_reporter
+        return statements, error_reporter
     
-    def evaluate(self, ast: Expr):
-        evaluator = Evaluator()
+    def _parse_expr(self, tokens: List[Token]):
+        error_reporter = ErrorReporter()
+        parser = Parser(tokens, error_reporter)
+        # pylint: disable=W0212
+        statements = parser._parse_expr()
+
+        return statements, error_reporter
+    
+    def evaluate_expr(self, ast: Expr):
+        evaluator = ExprEvaluator()
         return evaluator.evaluate(ast)
-    
-    def stringify(self, obj: object):
-        s = str(obj)
-        if isinstance(obj, float):
-            s.endswith(".0")
-            s = s[:s.find(".0")]
-        return s
+
+    def evaluate(self, statements: List[Stmt]):
+        for stmt in statements:
+            self.stmt_evaluator.evaluate(stmt)
